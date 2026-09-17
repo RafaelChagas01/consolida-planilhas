@@ -1,0 +1,29 @@
+[project]
+name = "consolida-planilhas"
+version = "1.0.0"
+description = "Junta planilhas de vendas de varias lojas num fechamento em Excel"
+requires-python = ">=3.12"
+dependencies = [
+    "defusedxml==0.7.1",
+    "fastapi==0.141.1",
+    "openpyxl==3.1.5",
+    "pandas==3.0.5",
+    "python-multipart==0.0.32",
+    "starlette==1.6.0",
+    "uvicorn==0.53.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 150
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+"scripts/*" = ["S311"]
