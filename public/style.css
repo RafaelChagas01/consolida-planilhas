@@ -1,0 +1,297 @@
+:root {
+  --texto: #1E2A24;
+  --suave: #5B6861;
+  --linha: #DCE3DF;
+  --fundo-painel: #F4F7F5;
+  --verde: #1D6F42;
+  --verde-escuro: #155533;
+  --erro: #B42318;
+  --aviso: #FFF4D6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #FFFFFF;
+  color: var(--texto);
+  font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 20px 24px;
+}
+
+.topo {
+  max-width: 720px;
+}
+
+h1 {
+  font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+  line-height: 1.12;
+  margin: 0 0 14px;
+}
+
+h2 {
+  font-size: 1.3rem;
+  margin: 0 0 14px;
+}
+
+h3 {
+  font-size: 1.05rem;
+  margin: 28px 0 8px;
+}
+
+.topo p {
+  color: var(--suave);
+  font-size: 19px;
+  margin: 0;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 28px;
+  margin-top: 36px;
+}
+
+.envio {
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.arquivos {
+  display: block;
+  border: 2px dashed #A9BAB0;
+  border-radius: 8px;
+  padding: 26px 18px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--fundo-painel);
+}
+
+.arquivos:hover,
+.arquivos.arrastando {
+  border-color: var(--verde);
+}
+
+.arquivos:focus-within {
+  outline: 3px solid rgba(29, 111, 66, 0.35);
+  outline-offset: 2px;
+}
+
+.arquivos-texto {
+  display: block;
+  font-weight: 600;
+  color: var(--verde-escuro);
+}
+
+.arquivos-dica {
+  display: block;
+  font-size: 15px;
+  color: var(--suave);
+}
+
+.arquivos input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.selecionados {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  font-size: 15px;
+}
+
+.selecionados li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--linha);
+}
+
+.selecionados span:last-child {
+  color: var(--suave);
+  white-space: nowrap;
+}
+
+.escondido {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+button,
+.botao {
+  display: inline-block;
+  font: inherit;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 10px 18px;
+  border: 1px solid var(--verde);
+  background: var(--verde);
+  color: #FFFFFF;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+button:hover,
+.botao:hover {
+  background: var(--verde-escuro);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+#enviar {
+  margin-top: 16px;
+}
+
+button.secundario {
+  background: #FFFFFF;
+  color: var(--verde-escuro);
+}
+
+button.secundario:hover {
+  background: var(--fundo-painel);
+}
+
+.erro {
+  color: var(--erro);
+  font-weight: 600;
+  margin: 12px 0 0;
+}
+
+.exemplo {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--linha);
+}
+
+.exemplo p {
+  margin: 0 0 10px;
+}
+
+.baixar-exemplos {
+  font-size: 15px;
+  color: var(--suave);
+  margin-top: 12px !important;
+  overflow-wrap: anywhere;
+}
+
+a {
+  color: var(--verde-escuro);
+  text-underline-offset: 3px;
+}
+
+.regras ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.regras li {
+  margin-bottom: 8px;
+}
+
+.privacidade {
+  font-size: 15px;
+  color: var(--suave);
+  margin-top: 18px;
+}
+
+.resultado {
+  margin-top: 44px;
+  padding-top: 28px;
+  border-top: 2px solid var(--texto);
+}
+
+.resultado-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.resultado-topo h2 {
+  margin-bottom: 4px;
+}
+
+.resultado-topo p {
+  margin: 0;
+  color: var(--suave);
+}
+
+.rolagem {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 7px 10px 7px 0;
+  border-bottom: 1px solid var(--linha);
+  vertical-align: top;
+}
+
+th {
+  color: var(--suave);
+  font-weight: 600;
+}
+
+td.numero,
+th.numero {
+  text-align: right;
+}
+
+.aviso {
+  background: var(--aviso);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-top: 22px;
+}
+
+footer {
+  max-width: 1080px;
+  margin: 40px auto 0;
+  padding: 18px 20px 32px;
+  border-top: 1px solid var(--linha);
+  font-size: 15px;
+  color: var(--suave);
+}
+
+@media (max-width: 800px) {
+  main {
+    padding-top: 32px;
+  }
+
+  .grade {
+    grid-template-columns: 1fr;
+  }
+
+  .envio {
+    padding: 18px;
+  }
+}

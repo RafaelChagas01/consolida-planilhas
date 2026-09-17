@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consolidador de planilhas de vendas</title>
+  <meta name="description" content="Junta planilhas de vendas de várias lojas num fechamento em Excel, com o motivo de cada linha descartada.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%231D6F42'/%3E%3Cpath d='M8 9h16M8 16h16M8 23h16M14 6v20' stroke='%23fff' stroke-width='2.4'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header class="topo">
+      <h1>Consolidador de planilhas de vendas</h1>
+      <p>
+        Junta as planilhas de várias lojas num fechamento só, em Excel. Cada loja pode mandar do seu jeito: coluna com
+        outro nome, título antes do cabeçalho, preço digitado como texto. O que não dá pra aproveitar fica listado com o motivo.
+      </p>
+    </header>
+
+    <div class="grade">
+      <section class="envio" aria-labelledby="titulo-envio">
+        <h2 id="titulo-envio">Enviar planilhas</h2>
+        <form id="formulario" novalidate>
+          <label class="arquivos" for="arquivos">
+            <span class="arquivos-texto">Escolher arquivos .xlsx</span>
+            <span class="arquivos-dica">ou arrastar pra cá. Até 5 arquivos de 1 MB cada.</span>
+            <input id="arquivos" name="arquivos" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple>
+          </label>
+          <ul id="selecionados" class="selecionados"></ul>
+          <div class="escondido" aria-hidden="true">
+            <label for="site">Site</label>
+            <input id="site" name="site" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <button id="enviar" type="submit">Gerar fechamento</button>
+        </form>
+        <p id="erro" class="erro" role="alert" hidden></p>
+
+        <div class="exemplo">
+          <p>Sem planilha à mão? Dá pra testar com três planilhas de exemplo, cada uma bagunçada de um jeito.</p>
+          <button id="usar-exemplo" type="button" class="secundario">Usar as planilhas de exemplo</button>
+          <p class="baixar-exemplos">
+            Baixar os exemplos:
+            <a href="/api/exemplos/loja_centro.xlsx">loja_centro.xlsx</a>,
+            <a href="/api/exemplos/vendas_rudge_ramos.xlsx">vendas_rudge_ramos.xlsx</a>,
+            <a href="/api/exemplos/Loja%20Diadema%20-%20jan%20a%20mar.xlsx">Loja Diadema - jan a mar.xlsx</a>
+          </p>
+        </div>
+      </section>
+
+      <aside class="regras" aria-labelledby="titulo-regras">
+        <h2 id="titulo-regras">O que ele confere</h2>
+        <ul>
+          <li>Acha o cabeçalho mesmo com título ou linhas em branco antes.</li>
+          <li>Entende nomes diferentes pra mesma coluna, como Qtd, QTDE e quantidade.</li>
+          <li>Converte data e valor digitados como texto, tipo 05/03/2026 e R$ 1.234,56.</li>
+          <li>Tira do fechamento data inválida, quantidade vazia ou negativa e total que não bate com quantidade x preço.</li>
+          <li>Junta categoria e produto escritos de jeitos diferentes (HIDRAULICA e Hidráulica).</li>
+          <li>Marca a linha idêntica à de cima, que costuma ser cópia colada duas vezes, mas não apaga.</li>
+        </ul>
+        <p class="privacidade">
+          Os arquivos não são guardados. São lidos na memória, o relatório é devolvido e tudo é descartado.
+        </p>
+      </aside>
+    </div>
+
+    <section id="resultado" class="resultado" hidden aria-live="polite">
+      <div class="resultado-topo">
+        <div>
+          <h2 id="resultado-titulo"></h2>
+          <p id="resultado-resumo"></p>
+        </div>
+        <a id="baixar" class="botao" download="fechamento-vendas.xlsx" href="#">Baixar fechamento.xlsx</a>
+      </div>
+
+      <h3>Por loja</h3>
+      <div class="rolagem">
+        <table>
+          <thead><tr><th>Loja</th><th>Vendas</th><th>Faturamento</th><th>Parte do total</th></tr></thead>
+          <tbody id="tabela-lojas"></tbody>
+        </table>
+      </div>
+
+      <h3>Por arquivo</h3>
+      <div class="rolagem">
+        <table>
+          <thead><tr><th>Arquivo</th><th>Loja identificada</th><th>Vendas</th><th>Descartadas</th></tr></thead>
+          <tbody id="tabela-arquivos"></tbody>
+        </table>
+      </div>
+
+      <div id="bloco-descartadas">
+        <h3>Linhas que ficaram de fora</h3>
+        <div class="rolagem">
+          <table>
+            <thead><tr><th>Arquivo</th><th>Linha</th><th>Motivo</th></tr></thead>
+            <tbody id="tabela-descartadas"></tbody>
+          </table>
+        </div>
+      </div>
+      <p id="aviso-repetidas" class="aviso" hidden></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      Feito por <a href="https://rafael-chagas-dev.vercel.app" rel="noopener noreferrer" target="_blank">Rafael Chagas</a>.
+      Código no <a href="https://github.com/RafaelChagas01/consolida-planilhas" rel="noopener noreferrer" target="_blank">GitHub</a>.
+      As planilhas de exemplo têm dados fictícios.
+    </p>
+  </footer>
+</body>
+</html>
