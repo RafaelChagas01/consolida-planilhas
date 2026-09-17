@@ -10,6 +10,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.datastructures import UploadFile
 from starlette.formparsers import MultiPartException
 
+from app.limite_corpo import CorpoGrandeDemais, LimiteDeCorpo
 from app.ratelimit import SlidingWindow
 from consolida.arquivo import TAMANHO_MAXIMO, ArquivoInvalido
 from consolida.processar import ARQUIVOS_MAXIMOS, Resultado, processar
@@ -38,16 +39,11 @@ CABECALHOS = {
 
 limite = SlidingWindow(limit=12, seconds=60)
 app = FastAPI(title="Consolidador de planilhas", docs_url=None, redoc_url=None, openapi_url=None)
+app.add_middleware(LimiteDeCorpo, maximo=CORPO_MAXIMO)
 
 
 @app.middleware("http")
-async def protecao(request: Request, call_next):
-    if request.method == "POST":
-        tamanho = request.headers.get("content-length", "")
-        if not tamanho.isdigit():
-            return JSONResponse({"erro": "requisição sem tamanho informado"}, status_code=411)
-        if int(tamanho) > CORPO_MAXIMO:
-            return JSONResponse({"erro": "envio maior que 4 MB"}, status_code=413)
+async def cabecalhos(request: Request, call_next):
     response = await call_next(request)
     for nome, valor in CABECALHOS.items():
         response.headers.setdefault(nome, valor)
@@ -99,6 +95,11 @@ async def rodar(arquivos: list[tuple[str, bytes]]) -> dict:
 @app.exception_handler(HTTPException)
 async def erro_http(request: Request, exc: HTTPException):
     return JSONResponse({"erro": exc.detail}, status_code=exc.status_code)
+
+
+@app.exception_handler(CorpoGrandeDemais)
+async def corpo_grande(request: Request, exc: CorpoGrandeDemais):
+    return JSONResponse({"erro": "envio maior que 4 MB"}, status_code=413)
 
 
 @app.exception_handler(Exception)

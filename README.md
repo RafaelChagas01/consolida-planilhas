@@ -60,7 +60,7 @@ As planilhas em `exemplos/` têm dados fictícios e são geradas por `scripts/ge
 
 Como a página recebe arquivo de qualquer pessoa, o envio passa por algumas travas antes de chegar no openpyxl:
 
-- Até 5 arquivos por vez, 1 MB cada e 4 MB no total. O tamanho é conferido antes de ler o corpo da requisição.
+- Até 5 arquivos por vez, 1 MB cada e 4 MB no total. O tamanho é conferido pelo Content-Length e, quando ele não vem, contando os bytes enquanto chegam.
 - Só .xlsx. O conteúdo precisa começar com a assinatura de zip e ter `xl/workbook.xml`; a extensão sozinha não basta.
 - Planilha com macro (`vbaProject.bin`) é recusada.
 - Contra zip bomb, a soma dos tamanhos descompactados não pode passar de 30 MB.
@@ -82,7 +82,7 @@ consolida/relatorio.py    monta o Excel de saída (openpyxl)
 consolida/__main__.py     linha de comando
 app/main.py               API (FastAPI) usada pela página
 public/                   página
-tests/                    70 testes
+tests/                    72 testes
 ```
 
 ## Testes

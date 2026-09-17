@@ -71,6 +71,23 @@ def test_corpo_grande_demais(client):
     assert resposta.status_code == 413
 
 
+def test_corpo_grande_demais_sem_content_length(client):
+    def partes():
+        for _ in range(5):
+            yield b"0" * (1024 * 1024)
+
+    resposta = client.post("/api/consolidar", content=partes(), headers={"content-type": "multipart/form-data; boundary=x"})
+    assert "content-length" not in resposta.request.headers
+    assert resposta.status_code == 413
+
+
+def test_exemplo_sem_content_length(client):
+    # na Vercel o POST sem corpo chega sem esse cabecalho
+    resposta = client.post("/api/exemplo", content=iter([b""]))
+    assert "content-length" not in resposta.request.headers
+    assert resposta.status_code == 200
+
+
 def test_limite_por_ip(client):
     codigos = [client.post("/api/consolidar", data={"site": ""}).status_code for _ in range(13)]
     assert codigos[:12] == [422] * 12
